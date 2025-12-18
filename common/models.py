@@ -1,38 +1,43 @@
 from django.db import models
 import uuid
+from django.utils import timezone
 
+from datetime import timedelta
+import random
 
 
 class Base(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, verbose_name="id")
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
-    created_at = models.DateField(auto_created=True, verbose_name="yaratilgan vaqti")
-    updated_at = models.DateField(auto_created=True, verbose_name="yangilangan vaqti")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        abstract = True
+
 
 class Kurs(models.Model):
     name = models.CharField(max_length=30, unique=True, blank=False)
-    
-    
+
+    def __str__(self):
+        return str(self.name)
+
 
 class Student(models.Model):
-    first_name = models.CharField(max_length=20, verbose_name="Ism", null=False, blank=False)
-    last_name = models.CharField(max_length=20, null=False, blank=False, verbose_name="Familiya")
+    first_name = models.CharField(
+        max_length=20, verbose_name="Ism", null=False, blank=False
+    )
+    last_name = models.CharField(
+        max_length=20, null=False, blank=False, verbose_name="Familiya"
+    )
     exam = models.ForeignKey("Exam", on_delete=models.CASCADE, related_name="students")
-    
-    
-class Exam(Base):
-    code =models.IntegerField(verbose_name="Imtihon kodi", unique=True)
-    kurs = models.ForeignKey("Kurs", on_delete=models.CASCADE)
-    guruh = models.ForeignKey("Guruh", on_delete=models.CASCADE)
-    
-    natija = models.ForeignKey("Natija", on_delete=models.CASCADE)
-    expire_date = models.DateTimeField(verbose_name="Imtihon tugash vaqti")
-    
+
+
 class Natija(models.Model):
     student = models.ForeignKey("Student", on_delete=models.CASCADE)
     savol = models.ForeignKey("Savol", on_delete=models.CASCADE)
     javob = models.CharField()
-    
+
 
 class Savol(models.Model):
     options = (
@@ -48,7 +53,21 @@ class Savol(models.Model):
     variant_c = models.CharField()
     variant_d = models.CharField()
     javob = models.CharField(choices=options)
-    
+
+
 class Guruh(models.Model):
     telegram_id = models.CharField()
     name = models.CharField(max_length=50)
+
+    def __str__(self):
+        return str(self.name)
+
+
+class Exam(Base):
+    code = models.IntegerField(unique=True, verbose_name="Exam Code", blank=True, null=True)
+    kurs = models.ForeignKey(Kurs, on_delete=models.CASCADE, related_name="exams")
+    guruh = models.ForeignKey(Guruh, on_delete=models.CASCADE)
+    Natija = models.ForeignKey(Natija, on_delete=models.CASCADE, null=True, blank=True)
+    expire_date = models.DateField(default=timezone.now() + timedelta(days=1), verbose_name="Expire Date", blank=True)
+
+    
