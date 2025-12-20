@@ -46,7 +46,7 @@ class Savol(models.Model):
         ("variant_c", "variant_c"),
         ("variant_d", "variant_d"),
     )
-    kurs = models.ForeignKey("Kurs", on_delete=models.CASCADE)
+    kurs = models.ManyToManyField("Kurs", related_name="kurslar")
     matn = models.TextField()
     variant_a = models.CharField()
     variant_b = models.CharField()

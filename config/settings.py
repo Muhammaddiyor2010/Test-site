@@ -38,6 +38,12 @@ REST_FRAMEWORK = {
     ]
 }
 
+
+
+CSRF_TRUSTED_ORIGINS = ['https://localhost:8000', 'http://127.0.0.1:8000']
+
+
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
