@@ -16,7 +16,7 @@ class Base(models.Model):
         abstract = True
 
 
-class Kurs(models.Model):
+class Kurs(Base):
     name = models.CharField(max_length=30, unique=True, blank=False)
 
     def __str__(self):
@@ -39,7 +39,7 @@ class Natija(models.Model):
     javob = models.CharField()
 
 
-class Savol(models.Model):
+class Savol(Base):
     options = (
         ("variant_a", "variant_a"),
         ("variant_b", "variant_b"),
@@ -55,7 +55,7 @@ class Savol(models.Model):
     javob = models.CharField(choices=options)
 
 
-class Guruh(models.Model):
+class Guruh(Base):
     telegram_id = models.CharField()
     name = models.CharField(max_length=50)
 

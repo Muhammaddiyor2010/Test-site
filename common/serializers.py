@@ -1,8 +1,26 @@
 import random
 from rest_framework import serializers 
-from .models import Kurs, Exam, Guruh, Savol
+from .models import Kurs, Exam, Guruh, Savol#
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 
+
+class UserRegisterSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True)
+
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'password']
+
+    def create(self, validated_data):
+        user = User.objects.create_user(
+            username=validated_data['username'],
+            email=validated_data['email'],
+            password=validated_data['password']
+        )
+        return user
 
 class KursSerializer(serializers.ModelSerializer):
     class Meta:
@@ -46,3 +64,9 @@ class SavolSerializer(serializers.ModelSerializer):
         savol = Savol.objects.create(**validated_data)
         savol.kurs.set(kurs_data)
         return savol
+    
+    
+class ResultSerializers(serializers.BaseSerializer):
+    question_id =serializers.IntegerField()
+    answer = serializers.CharField()
+    
